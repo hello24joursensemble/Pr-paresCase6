@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le quiz des souvenirs — 24 jours ensemble</title>
+<style>
+:root{
+  box-sizing:border-box;color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --green:#173f35;--green2:#245849;--mint:#cfe3b0;--pink:#ffb8cc;--cream:#f4f1e4;--ink:#18372f;--muted:#5d7a6c;--line:#d5dfd1;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--green);color:var(--cream);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center;padding:20px}
+.app{width:min(760px,100%);margin:auto}
+.brand{text-align:center;font-weight:800;letter-spacing:.12em;color:var(--mint);font-size:.78rem}.brand span{color:var(--pink)}
+h1{text-align:center;font-size:clamp(2rem,7vw,3.2rem);line-height:1.05;margin:12px 0 8px}
+.sub{text-align:center;color:#e4eadb;margin:0 auto 20px;max-width:540px}
+.panel{background:var(--cream);color:var(--ink);border-radius:26px;padding:clamp(18px,4vw,32px);box-shadow:0 18px 50px #09251f66;margin-bottom:16px}
+.hide{display:none!important}
+button{border:0;border-radius:14px;padding:13px 16px;font:inherit;font-weight:750;cursor:pointer;transition:transform .12s,opacity .12s}
+button:active{transform:scale(.98)}button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:var(--green);color:#fff}.mint{background:var(--mint);color:var(--ink)}.soft{background:#e8ece3;color:var(--ink)}.pink{background:var(--pink);color:#603c4b}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.row>button{flex:1 1 180px}
+input[type=text],textarea{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--ink);background:#fff;outline:none}
+textarea{resize:vertical;min-height:64px}
+input:focus,textarea:focus{border-color:var(--green2)}
+label{font-weight:700;font-size:.85rem;color:var(--muted);display:block;margin:10px 0 4px}
+.steps{margin:0;padding-left:1.2em;line-height:1.7}
+.tip{background:#edf2e8;border-radius:14px;padding:12px 14px;margin-top:14px;color:#456252;font-size:.95rem}
+.bar{height:8px;background:#dce3d6;border-radius:20px;overflow:hidden;margin:10px 0 16px}.bar i{display:block;height:100%;width:0;background:var(--green2);transition:width .25s}
+.qcard{border:2px solid var(--line);border-radius:18px;padding:14px;margin-top:14px;background:#fbfaf3}
+.qhead{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--green2)}
+.qhead button{padding:6px 10px;background:#f1d9de;color:#754457;font-size:.85rem}
+.chk{display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:700;font-size:.9rem;color:#754457}
+.chk input{width:20px;height:20px}
+.thumb{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.thumb img{max-width:120px;max-height:90px;border-radius:10px;border:2px solid var(--line)}
+.thumb button{padding:8px 12px;font-size:.88rem}
+details{margin-top:14px}summary{cursor:pointer;font-weight:750;color:var(--green2)}
+details ul{line-height:1.6;color:#456252;padding-left:1.2em}
+.score{display:flex;gap:10px;margin-bottom:14px}
+.team{flex:1;text-align:center;border-radius:16px;padding:10px;background:var(--mint);color:var(--ink);font-weight:800}
+.team:nth-child(2){background:#ffe0e9;color:#603c4b}.team b{display:block;font-size:1.9rem;line-height:1.1}
+.count{display:flex;justify-content:space-between;color:#49675b;font-weight:700;font-size:.9rem}
+.qtext{font-size:clamp(1.3rem,4.5vw,1.8rem);font-weight:800;text-align:center;margin:16px 0}
+.qphoto{text-align:center}.qphoto img{max-width:100%;max-height:340px;border-radius:18px;border:3px solid var(--mint)}
+.answer{background:#edf2e8;border-radius:16px;padding:16px;text-align:center;margin-top:16px}
+.answer .a{font-size:1.5rem;font-weight:900;color:var(--green)}
+.trap{display:inline-block;background:var(--pink);color:#603c4b;border-radius:999px;padding:4px 12px;font-weight:800;font-size:.85rem;margin-bottom:8px}
+.center{text-align:center}.big{font-size:3.4rem;font-weight:900;color:var(--green);line-height:1.1;margin:8px 0}
+.finalscores{display:flex;gap:10px;margin:14px 0}
+.memory{background:#ffe0e9;border-radius:18px;padding:16px;margin-top:16px;color:#603c4b;font-weight:700}
+.footer{text-align:center;color:#d5e3d1;font-size:.85rem;margin-top:14px}
+@media(max-width:480px){body{padding:14px}}
+</style>
+</head>
+<body>
+<main class="app">
+  <div class="brand">24 JOURS <span>ENSEMBLE</span></div>
+  <h1>Le quiz des souvenirs 📸</h1>
+  <p class="sub">15 questions sur les Noëls passés de la famille : cadeaux, repas, anecdotes. Combien de Noëls se cachent dans vos mémoires ?</p>
+
+  <!-- ACCUEIL -->
+  <section class="panel" id="home">
+    <ol class="steps">
+      <li>Préparez 15 questions à partir de vos souvenirs ou de vos photos</li>
+      <li>Formez deux équipes</li>
+      <li>Posez les questions une par une</li>
+      <li>Comptez les points</li>
+      <li>Terminez en racontant votre souvenir de Noël préféré</li>
+    </ol>
+    <div class="tip">👧 Astuce : les ados préparent le quiz pour les adultes, avec des questions pièges (2 points) et des photos à reconnaître.</div>
+    <div class="row">
+      <button class="primary" id="goEdit">✏️ Préparer les questions</button>
+      <button class="mint" id="goTeams">▶️ Jouer</button>
+    </div>
+    <div class="tip" id="homeInfo"></div>
+  </section>
+
+  <!-- EDITEUR -->
+  <section class="panel hide" id="editor">
+    <div class="count"><span id="readyTxt"></span><span>Objectif : 15</span></div>
+    <div class="bar"><i id="readyBar"></i></div>
+    <details>
+      <summary>💡 Idées de questions</summary>
+      <ul>
+        <li>Quel cadeau a fait le plus de bruit (ou de dégâts) sous le sapin ?</li>
+        <li>Qui s’est endormi avant le dessert, et en quelle année ?</li>
+        <li>Quel plat a complètement raté… mais dont on parle encore ?</li>
+        <li>Photo : en quelle année ce pull a-t-il été porté ?</li>
+        <li>Piège : une anecdote que tout le monde raconte… mais qui s’est passée autrement</li>
+      </ul>
+    </details>
+    <div id="list"></div>
+    <div class="row">
+      <button class="soft" id="addQ">+ Ajouter une question</button>
+      <button class="primary" id="saveGo">Enregistrer et former les équipes →</button>
+    </div>
+    <div class="row"><button class="soft" id="backHome1">← Retour</button></div>
+    <div class="tip">Le quiz est enregistré dans ce navigateur, sur cet appareil. Préparez-le et jouez sur le même téléphone ou la même tablette.</div>
+    <div class="tip hide" id="storeWarn">⚠️ Mémoire pleine : retirez quelques photos pour continuer à enregistrer.</div>
+  </section>
+
+  <!-- EQUIPES -->
+  <section class="panel hide" id="teams">
+    <h2 style="margin-top:0">Former les équipes</h2>
+    <label for="t1">Équipe 1</label><input type="text" id="t1" value="Les ados" maxlength="24">
+    <label for="t2">Équipe 2</label><input type="text" id="t2" value="Les adultes" maxlength="24">
+    <label style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="shuffle" style="width:20px;height:20px"> Mélanger l’ordre des questions</label>
+    <div class="row">
+      <button class="soft" id="backHome2">← Retour</button>
+      <button class="primary" id="startGame">Lancer le quiz 🎉</button>
+    </div>
+  </section>
+
+  <!-- JEU -->
+  <section class="panel hide" id="game">
+    <div class="score"><div class="team"><span id="n1"></span><b id="s1">0</b></div><div class="team"><span id="n2"></span><b id="s2">0</b></div></div>
+    <div class="count"><span id="gcount"></span><span id="gpts"></span></div>
+    <div class="bar"><i id="gbar"></i></div>
+    <div class="qphoto hide" id="qphoto"><img alt="Photo de la question" id="qimg"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="row"><button class="primary" id="reveal">👀 Révéler la réponse</button></div>
+    <div class="answer hide" id="answer">
+      <div class="trap hide" id="trap">🪤 Question piège : 2 points !</div>
+      <div class="a" id="atext"></div>
+      <div style="margin-top:12px;font-weight:700">Qui a trouvé ?</div>
+      <div class="row">
+        <button class="mint" id="win1"></button>
+        <button class="pink" id="win2"></button>
+        <button class="soft" id="win0">Personne</button>
+      </div>
+    </div>
+    <div class="row"><button class="primary hide" id="next">Question suivante →</button></div>
+  </section>
+
+  <!-- FIN -->
+  <section class="panel hide center" id="end">
+    <div style="font-size:3rem">🎄🏆📸</div>
+    <h2 id="winner" style="margin:6px 0"></h2>
+    <div class="finalscores">
+      <div class="team"><span id="fn1"></span><b id="fs1"></b></div>
+      <div class="team"><span id="fn2"></span><b id="fs2"></b></div>
+    </div>
+    <div class="memory">
+      <div style="font-size:.85rem;letter-spacing:.08em">DERNIER TOUR : LE SOUVENIR DE NOËL PRÉFÉRÉ</div>
+      <div id="prompt" style="font-size:1.2rem;margin-top:8px"></div>
+      <div class="row"><button class="soft" id="otherPrompt">Une autre idée</button></div>
+    </div>
+    <div class="row">
+      <button class="primary" id="replay">Rejouer</button>
+      <button class="soft" id="editAgain">Modifier le quiz</button>
+    </div>
+  </section>
+  <div class="footer">La magie de Noël ne coûte rien ✨</div>
+</main>
+
+<script>
+const KEY='quiz-souvenirs-v1';
+const $=id=>document.getElementById(id);
+const blank=()=>({q:'',a:'',trap:false,img:''});
+let Q=[],names=['Les ados','Les adultes'],scores=[0,0],order=[],pos=0,awarded=false;
+const PROMPTS=[
+ 'Le cadeau qui vous a le plus marqué, offert ou reçu.',
+ 'Le plat ou le dessert que vous attendez chaque année.',
+ 'Un Noël où rien ne s’est passé comme prévu.',
+ 'Votre plus ancien souvenir de Noël.',
+ 'Une tradition de famille que vous voulez garder pour toujours.',
+ 'Le moment de Noël où vous avez le plus ri.',
+ 'Un souvenir de Noël avec quelqu’un que vous aimez beaucoup.'
+];
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(d)&&d.length)return d}catch(e){}return [blank(),blank(),blank()]}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(Q));$('storeWarn').classList.add('hide')}catch(e){$('storeWarn').classList.remove('hide')}}
+const ready=()=>Q.filter(x=>x.q.trim()&&x.a.trim());
+function show(id){['home','editor','teams','game','end'].forEach(s=>$(s).classList.toggle('hide',s!==id));window.scrollTo(0,0)}
+
+function home(){
+  const n=ready().length;
+  $('homeInfo').textContent=n?`Quiz enregistré : ${n} question${n>1?'s':''} prête${n>1?'s':''}.`:'Aucune question pour l’instant : commencez par préparer le quiz.';
+  $('goTeams').disabled=!n;show('home');
+}
+function updateReady(){const n=ready().length;$('readyTxt').textContent=`${n} question${n>1?'s':''} prête${n>1?'s':''}`;$('readyBar').style.width=Math.min(100,n/15*100)+'%'}
+function shrink(file,cb){
+  const fr=new FileReader();
+  fr.onload=()=>{const im=new Image();im.onload=()=>{
+    const m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    cb(c.toDataURL('image/jpeg',.72))};im.src=fr.result};
+  fr.readAsDataURL(file);
+}
+function renderList(){
+  const list=$('list');list.textContent='';
+  Q.forEach((it,i)=>{
+    const card=document.createElement('div');card.className='qcard';
+    const head=document.createElement('div');head.className='qhead';
+    const t=document.createElement('span');t.textContent='Question '+(i+1);
+    const del=document.createElement('button');del.textContent='Supprimer';
+    del.onclick=()=>{Q.splice(i,1);if(!Q.length)Q.push(blank());save();renderList()};
+    head.append(t,del);
+    const l1=document.createElement('label');l1.textContent='Question';
+    const q=document.createElement('textarea');q.value=it.q;q.placeholder='Ex. Quel cadeau a fait pleurer de rire en 2019 ?';
+    q.oninput=()=>{it.q=q.value;save();updateReady()};
+    const l2=document.createElement('label');l2.textContent='Réponse';
+    const a=document.createElement('input');a.type='text';a.value=it.a;a.placeholder='La bonne réponse';
+    a.oninput=()=>{it.a=a.value;save();updateReady()};
+    const chk=document.createElement('label');chk.className='chk';
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=it.trap;cb.onchange=()=>{it.trap=cb.checked;save()};
+    chk.append(cb,document.createTextNode('🪤 Question piège (2 points)'));
+    const th=document.createElement('div');th.className='thumb';
+    const file=document.createElement('input');file.type='file';file.accept='image/*';file.className='hide';
+    file.onchange=()=>{if(file.files[0])shrink(file.files[0],d=>{it.img=d;save();renderList()})};
+    const add=document.createElement('button');add.className='soft';add.textContent=it.img?'📷 Changer la photo':'📷 Ajouter une photo (facultatif)';
+    add.onclick=()=>file.click();
+    th.append(add,file);
+    if(it.img){const im=document.createElement('img');im.src=it.img;im.alt='Aperçu';th.append(im);
+      const rm=document.createElement('button');rm.className='soft';rm.textContent='Retirer';rm.onclick=()=>{it.img='';save();renderList()};th.append(rm)}
+    card.append(head,l1,q,l2,a,chk,th);list.append(card);
+  });
+  updateReady();
+}
+function setNames(){
+  [1,2].forEach(i=>{$('n'+i).textContent=names[i-1];$('fn'+i).textContent=names[i-1]});
+  $('win1').textContent='+ '+names[0];$('win2').textContent='+ '+names[1];
+}
+function startGame(){
+  names=[$('t1').value.trim()||'Équipe 1',$('t2').value.trim()||'Équipe 2'];
+  order=ready();if($('shuffle').checked)order=[...order].sort(()=>Math.random()-.5);
+  pos=0;scores=[0,0];setNames();show('game');loadQ();
+}
+function loadQ(){
+  const it=order[pos];awarded=false;
+  $('gcount').textContent=`Question ${pos+1} / ${order.length}`;
+  $('gpts').textContent='';
+  $('gbar').style.width=(pos/order.length*100)+'%';
+  $('s1').textContent=scores[0];$('s2').textContent=scores[1];
+  $('qtext').textContent=it.q;
+  $('qphoto').classList.toggle('hide',!it.img);if(it.img)$('qimg').src=it.img;
+  $('atext').textContent=it.a;$('trap').classList.toggle('hide',!it.trap);
+  $('answer').classList.add('hide');$('reveal').classList.remove('hide');$('next').classList.add('hide');
+  ['win0','win1','win2'].forEach(x=>$(x).disabled=false);
+}
+function award(t){
+  if(awarded)return;awarded=true;
+  const p=order[pos].trap?2:1;
+  if(t>0)scores[t-1]+=p;
+  $('s1').textContent=scores[0];$('s2').textContent=scores[1];
+  ['win0','win1','win2'].forEach(x=>$(x).disabled=true);
+  $('next').classList.remove('hide');$('next').textContent=pos===order.length-1?'Voir le résultat →':'Question suivante →';
+}
+function newPrompt(){let p;do{p=PROMPTS[Math.floor(Math.random()*PROMPTS.length)]}while(p===$('prompt').textContent&&PROMPTS.length>1);$('prompt').textContent=p}
+function finish(){
+  $('fs1').textContent=scores[0];$('fs2').textContent=scores[1];
+  $('winner').textContent=scores[0]===scores[1]?'Égalité parfaite ! 🤝':'Bravo '+names[scores[0]>scores[1]?0:1]+' ! 🏆';
+  newPrompt();show('end');
+}
+$('goEdit').onclick=()=>{renderList();show('editor')};
+$('goTeams').onclick=()=>show('teams');
+$('addQ').onclick=()=>{Q.push(blank());save();renderList();const c=$('list').lastChild;c&&c.scrollIntoView({behavior:'smooth'})};
+$('saveGo').onclick=()=>{save();if(!ready().length){alert('Ajoutez au moins une question avec sa réponse.');return}show('teams')};
+$('backHome1').onclick=home;$('backHome2').onclick=home;
+$('startGame').onclick=startGame;
+$('reveal').onclick=()=>{$('answer').classList.remove('hide');$('reveal').classList.add('hide');
+  $('gpts').textContent=order[pos].trap?'🪤 Piège : 2 points':'1 point'};
+$('win0').onclick=()=>award(0);$('win1').onclick=()=>award(1);$('win2').onclick=()=>award(2);
+$('next').onclick=()=>{if(pos<order.length-1){pos++;loadQ()}else finish()};
+$('otherPrompt').onclick=newPrompt;
+$('replay').onclick=()=>show('teams');
+$('editAgain').onclick=()=>{renderList();show('editor')};
+Q=load();home();
+</script>
+</body>
+</html>
